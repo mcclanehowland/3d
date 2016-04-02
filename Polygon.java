@@ -10,11 +10,13 @@ public class Polygon {
         this.zpoints = zpoints;
         this.color = color;
     }
+    //draw the polygon
     public void draw(Graphics g) {
         g.setColor(color);
         g.fillPolygon(xpoints,ypoints,xpoints.length);
     }
-    public int getLargest() {
+    //returns the largest z value in the array of points
+    public int getLargestZ() {  
        int largest = zpoints[1];
        for(int i = 0; i < zpoints.length;i++) {
            if(zpoints[i] > largest) {

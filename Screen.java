@@ -16,7 +16,8 @@ public class Screen extends JPanel {
         points = new ArrayList<Point>();
         polygons = new ArrayList<Polygon>();
 
-        points.add(new Point(0,0,0));
+        //add four faces to the cube
+        points.add(new Point(0,0,0)); 
         points.add(new Point(100,0,0));
         points.add(new Point(100,100,0));
         points.add(new Point(0,100,0));
@@ -50,7 +51,7 @@ public class Screen extends JPanel {
         /**
             do the rotating here:
         */
-            rotateX(Math.PI/200);
+            rotateX(Math.PI/200); //happens every time repaint is called
             rotateY(Math.PI/200);
             rotateZ(Math.PI/200);
         //axes
@@ -62,14 +63,8 @@ public class Screen extends JPanel {
         for(Point each : points) {
             gBuff.fillOval((int)each.x-2+400,(int)each.y-2+300,4,4);
         }
-        //connect the points
-        /*gBuff.setColor(Color.blue);
-        for(int i = 0; i < points.size()-1;i++) {
-            Point p1 = points.get(i);
-            Point p2 = points.get(i+1);
-            gBuff.drawLine((int)p1.x+400,(int)p1.y+300,(int)p2.x+400,(int)p2.y+300);
-        }*/
         //experiment with polygons
+        // creates a new polygon for each set of four points, aka a face of the cube 
         for(int i = 0; i < points.size();i += 4) {
 
             Color color = new Color((i*100)%255,(i*100)%255,(i*1000)%255);
@@ -92,13 +87,14 @@ public class Screen extends JPanel {
             int z3 = (int)points.get(i+2).z;
             int z4 = (int)points.get(i+3).z;
             int[] zpoints = {z1,z2,z3,z4};
-
+            
             polygons.add(new Polygon(xpoints,ypoints,zpoints,color));
 
         }
+        //sort the polygons with largest z value first so that the closer ones are drawn over the farther
         for(int i = 0; i < polygons.size()-1;i++) {
             for(int j = i+1; j < polygons.size();j++) {
-                if(polygons.get(i).getLargest() > polygons.get(j).getLargest()) {
+                if(polygons.get(i).getLargestZ() > polygons.get(j).getLargestZ()) { //if z value is larger it will swap
                     Polygon temp = polygons.get(i);
                     polygons.set(i,polygons.get(j));
                     polygons.set(j,temp);
@@ -112,7 +108,9 @@ public class Screen extends JPanel {
         polygons.clear();
 
     }
-    public void rotateX(double theta) {
+    
+    //rotation code from tutorial
+    public void rotateX(double theta) { //along the x-axis
         double cos = Math.cos(theta);
         double sin = Math.sin(theta);
         for(Point each : points) {
@@ -122,7 +120,7 @@ public class Screen extends JPanel {
             each.z = z*cos + y*sin;
         }
     }
-    public void rotateY(double theta) {
+    public void rotateY(double theta) { //along the y-axis
         double cos = Math.cos(theta);
         double sin = Math.sin(theta);
         for(Point each : points) {
@@ -132,7 +130,7 @@ public class Screen extends JPanel {
             each.z = z*cos + x*sin;
         }
     }
-    public void rotateZ(double theta) {
+    public void rotateZ(double theta) { //along the z-axis
         double cos = Math.cos(theta);
         double sin = Math.sin(theta);
         for(Point each : points) {
@@ -150,7 +148,7 @@ public class Screen extends JPanel {
             catch(InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
-            repaint();
+            repaint(); //rotation is in the animate class
         }
     }
             
