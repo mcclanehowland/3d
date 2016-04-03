@@ -36,6 +36,17 @@ public class Screen extends JPanel {
         points.add(new Point(100,0,100));
         points.add(new Point(100,100,100));
         points.add(new Point(100,100,0));
+
+        points.add(new Point(0,100,0));
+        points.add(new Point(100,100,0));
+        points.add(new Point(100,100,100));
+        points.add(new Point(0,100,100));
+
+        points.add(new Point(0,0,0));
+        points.add(new Point(100,0,0));
+        points.add(new Point(100,0,100));
+        points.add(new Point(0,0,100));
+
     }
     public Dimension getPreferredSize() {
         return new Dimension(800,600);
@@ -51,9 +62,9 @@ public class Screen extends JPanel {
         /**
             do the rotating here:
         */
-            rotateX(Math.PI/200); //happens every time repaint is called
+            //rotateX(Math.PI/200); //happens every time repaint is called
             rotateY(Math.PI/200);
-            rotateZ(Math.PI/200);
+            //rotateZ(Math.PI/200);
         //axes
         gBuff.setColor(Color.black);
         gBuff.drawLine(0,300,800,300); //x
