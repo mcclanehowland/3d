@@ -1,0 +1,21 @@
+import java.awt.Graphics;
+import java.awt.Color;
+
+public class Point {
+    private int x,y,z; //x,y, and z locations
+    int[] tuple; //tuple is a set of three vectors/coordinates
+    public Point(int x,int y,int z) {
+        //using three seperate int values
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        //using tuples
+    }
+    public void drawPoint(Graphics g) { //more later
+        g.setColor(Color.black);
+        int x2 = Math.cos(30)*x - Math.cos(30)*y;
+        int y2 = Math.sin(30)*x + Math.sin(30)*y+z;
+        g.fillRect(x2,y2,4,4);
+    }
+}
+
