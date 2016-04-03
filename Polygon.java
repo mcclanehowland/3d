@@ -3,17 +3,24 @@ import java.awt.Color;
 
 public class Polygon {
     int[] xpoints,ypoints,zpoints;
+    boolean wireframe;
     Color color;
-    public Polygon(int[] xpoints,int[] ypoints,int[] zpoints,Color color) {
+    public Polygon(int[] xpoints,int[] ypoints,int[] zpoints,Color color,boolean wireframe) {
         this.xpoints = xpoints;
         this.ypoints = ypoints;
         this.zpoints = zpoints;
         this.color = color;
+        this.wireframe = wireframe;
     }
     //draw the polygon
     public void draw(Graphics g) {
         g.setColor(color);
-        g.fillPolygon(xpoints,ypoints,xpoints.length);
+        if(!wireframe) {
+            g.fillPolygon(xpoints,ypoints,xpoints.length);
+        }
+        else {
+            g.drawPolygon(xpoints,ypoints,xpoints.length);
+        }
     }
     //returns the largest z value in the array of points
     public int getLargestZ() {  

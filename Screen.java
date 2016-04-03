@@ -18,6 +18,7 @@ public class Screen extends JPanel {
         points = new ArrayList<Point>();
         polygons = new ArrayList<Polygon>();
         cubes.add(new Cube(0,0,0,50));
+        cubes.add(new Cube(100,100,100,50));
     }
     public Dimension getPreferredSize() {
         return new Dimension(800,600);
@@ -35,11 +36,20 @@ public class Screen extends JPanel {
         */
             rotateX(Math.PI/200); //happens every time repaint is called
             rotateY(Math.PI/200);
-            //rotateZ(Math.PI/200);
+            rotateZ(Math.PI/200);
         //axes
         gBuff.setColor(Color.black);
         gBuff.drawLine(0,300,800,300); //x
         gBuff.drawLine(400,0,400,600); //y
+        for(int i = 0;i < cubes.size()-1;i++) {
+            for(int j = i+1;j < cubes.size();j++) {
+                if(cubes.get(i).largest > cubes.get(j).largest) {
+                    Cube temp = cubes.get(i);
+                    cubes.set(i,cubes.get(j));
+                    cubes.set(j,temp);
+                }
+            }
+        }
         for(Cube each : cubes) {
             each.draw(gBuff);
         }

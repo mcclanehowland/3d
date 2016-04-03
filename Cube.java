@@ -3,9 +3,10 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 public class Cube {
-    int x,y,z,size;
+    int x,y,z,size,largest;
     ArrayList<Point> points;
     ArrayList<Polygon> polygons;
+    boolean wireframe = false;
     
     public Cube(int x,int y, int z, int size) {
         this.x = x; 
@@ -70,7 +71,7 @@ public class Cube {
             int z4 = (int)points.get(i+3).z;
             int[] zpoints = {z1,z2,z3,z4};
             
-            polygons.add(new Polygon(xpoints,ypoints,zpoints,color));
+            polygons.add(new Polygon(xpoints,ypoints,zpoints,color,wireframe));
 
         }
         //sort the polygons with largest z value first so that the closer ones are drawn over the farther
@@ -83,6 +84,7 @@ public class Cube {
                 }
             }
         }
+        largest = polygons.get(polygons.size()-1).getLargestZ();
         for(Polygon each : polygons) {
             each.draw(g);
         }
