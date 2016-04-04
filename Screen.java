@@ -4,24 +4,33 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
-public class Screen extends JPanel {
+
+public class Screen extends JPanel implements MouseListener,MouseMotionListener {
     private BufferedImage bufferedImage;
     private int count;
+    private boolean mouseDown = false;
+    private int mx,my; //the coordinates of the mouse when it is clicked
+    private int px,py; //previous x and y coordinates of the mouse
+
+    double thetaX = 0;
+    double thetaY = 0;
+    double thetaZ = 0;
 
     ArrayList<Point> points;
     ArrayList<Polygon> polygons;
     ArrayList<Cube> cubes;
 
     public Screen() {
+        addMouseListener(this);
+        addMouseMotionListener(this);
         cubes = new ArrayList<Cube>();
         points = new ArrayList<Point>();
         polygons = new ArrayList<Polygon>();
-        for(int i = -250; i < 250;i += 20) {
-            for(int j = -250; j < 250;j += 20) {
-                cubes.add(new Cube(i,j,0,10));
-            }
-        }
+        cubes.add(new Cube(0,0,0,50));
     }
     public Dimension getPreferredSize() {
         return new Dimension(800,600);
@@ -37,9 +46,9 @@ public class Screen extends JPanel {
         /**
             do the rotating here:
         */
-            rotateX(Math.PI/200); //happens every time repaint is called
-            rotateY(Math.PI/200);
-            rotateZ(Math.PI/200);
+            //rotateX(thetaX); //happens every time repaint is called
+            //rotateY(thetaY);
+            //rotateZ(thetaZ);
         //axes
         gBuff.setColor(Color.black);
         gBuff.drawLine(0,300,800,300); //x
@@ -96,17 +105,40 @@ public class Screen extends JPanel {
             }
         }
     }
-    public void animate() {
-        while(true) {
-            try {
-                Thread.sleep(100);
-            }
-            catch(InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-            repaint(); //rotation is in the animate class
+    public void mousePressed(MouseEvent e) {
+        mx = e.getX();
+        my = e.getY();
+	}
+    public void mouseDragged(MouseEvent e) {
+        count++;
+        if(e.getX() - px < 0) {
+            thetaY -= 0.001;
         }
+        else if(e.getX() - px > 0) {
+            thetaY += 0.001;
+        }
+        rotateX(thetaX); 
+        rotateY(thetaY);
+        rotateZ(thetaZ);
+        repaint();
+        px = e.getX();
+        py = e.getY();
     }
-            
-
+    public void sleep(int time)
+	{
+		try 
+		{
+			Thread.sleep(time);
+		} 
+		catch(InterruptedException ex) 
+		{
+			Thread.currentThread().interrupt();
+		}
+	}
+    public void mouseMoved(MouseEvent e) {
+    }
+	public void mouseReleased(MouseEvent e){}
+	public void mouseEntered(MouseEvent e){}
+	public void mouseExited(MouseEvent e){}
+	public void mouseClicked(MouseEvent e){}
 }
