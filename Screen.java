@@ -17,8 +17,11 @@ public class Screen extends JPanel {
         cubes = new ArrayList<Cube>();
         points = new ArrayList<Point>();
         polygons = new ArrayList<Polygon>();
-        cubes.add(new Cube(0,0,0,50));
-        cubes.add(new Cube(100,100,100,50));
+        for(int i = -250; i < 250;i += 20) {
+            for(int j = -250; j < 250;j += 20) {
+                cubes.add(new Cube(i,j,0,10));
+            }
+        }
     }
     public Dimension getPreferredSize() {
         return new Dimension(800,600);
