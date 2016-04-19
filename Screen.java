@@ -20,7 +20,7 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     double thetaZ = 0;
 
     ArrayList<Point> points;
-    ArrayList<Polygon> polygons;
+    //ArrayList<Polygon> polygons;
     ArrayList<Cube> cubes;
 
     public Screen() {
@@ -28,12 +28,15 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
         addKeyListener(this);
         //set focusable to true to allow focus to shift to keyboard
         setFocusable(true);
+        //add the mouse and mousmotion listeners
+        addMouseListener(this);
+        addMouseMotionListener(this);
         //create cube arraylist
         cubes = new ArrayList<Cube>();
         /** add the cubes */
-        for(int x = -250;x <= 250;x += 20) {
-            for(int y = -250;y <= 250;y += 20) {
-                cubes.add(new Cube(x,y,0,15));
+        for(int x = -260;x <= 260;x += 80) {
+            for(int y = -260;y <= 260;y += 80) {
+                cubes.add(new Cube(x,y,-20,40));
             }
         }
     }
@@ -164,7 +167,19 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     }
     //mousepressed for initial location of click
     public void mousePressed(MouseEvent e) {
-        
+        int x = e.getX(); //event x and y positions
+        int y = e.getY();
+        //check the collisions
+        //loop through the cubes and their polygons and check between the x and y boundaries of the polygons, each fucking time
+        for(Cube cube : cubes) { //lmao cube three times in a row
+            for(Face each : cube.polygons) { //lmao more bad code
+                System.out.println("whate");
+                if(each.contains(x,y)) {
+                    System.out.println("wtf it worked");
+
+                }
+            }
+        }
     }
     //mousedragged for updating the location of the block being dragged across the fucking screen
     public void mouseDragged(MouseEvent e) {
