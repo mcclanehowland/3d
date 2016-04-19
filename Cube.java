@@ -14,44 +14,48 @@ public class Cube {
         this.z = z; 
         this.size = size; 
         points = new ArrayList<Point>();
-
-        points.add(new Point(x,y,z)); 
-        points.add(new Point(x+size,y,z));
-        points.add(new Point(x+size,y+size,z));
-        points.add(new Point(x,y+size,z));
-
-        points.add(new Point(x,y,z+size));
-        points.add(new Point(x+size,y,z+size));
-        points.add(new Point(x+size,y+size,z+size));
-        points.add(new Point(x,y+size,z+size));
-
-        points.add(new Point(x,y,z));
-        points.add(new Point(x,y,z+size));
-        points.add(new Point(x,y+size,z+size));
-        points.add(new Point(x,y+size,z));
-
-        points.add(new Point(x+size,y,z));
-        points.add(new Point(x+size,y,z+size));
-        points.add(new Point(x+size,y+size,z+size));
-        points.add(new Point(x+size,y+size,z));
-
-        points.add(new Point(x,y+size,z));
-        points.add(new Point(x+size,y+size,z));
-        points.add(new Point(x+size,y+size,z+size));
-        points.add(new Point(x,y+size,z+size));
-
-        points.add(new Point(x,y,z));
-        points.add(new Point(x+size,y,z));
-        points.add(new Point(x+size,y,z+size));
-        points.add(new Point(x,y,z+size));
-
         polygons = new ArrayList<Polygon>();
+
+        /** adding all the points. They are grouped into the 6 faces of the cube */
+
+        points.add(new Point(x,y,z));  
+        points.add(new Point(x+size,y,z));
+        points.add(new Point(x+size,y+size,z));
+        points.add(new Point(x,y+size,z));
+
+        points.add(new Point(x,y,z+size));
+        points.add(new Point(x+size,y,z+size));
+        points.add(new Point(x+size,y+size,z+size));
+        points.add(new Point(x,y+size,z+size));
+
+        points.add(new Point(x,y,z));
+        points.add(new Point(x,y,z+size));
+        points.add(new Point(x,y+size,z+size));
+        points.add(new Point(x,y+size,z));
+
+        points.add(new Point(x+size,y,z));
+        points.add(new Point(x+size,y,z+size));
+        points.add(new Point(x+size,y+size,z+size));
+        points.add(new Point(x+size,y+size,z));
+
+        points.add(new Point(x,y+size,z));
+        points.add(new Point(x+size,y+size,z));
+        points.add(new Point(x+size,y+size,z+size));
+        points.add(new Point(x,y+size,z+size));
+
+        points.add(new Point(x,y,z));
+        points.add(new Point(x+size,y,z));
+        points.add(new Point(x+size,y,z+size));
+        points.add(new Point(x,y,z+size));
+
+        
     }
     public void draw(Graphics g) {
         for(int i = 0; i < points.size();i += 4) {
 
-            Color color = new Color((i*100)%255,(i*100)%255,(i*100)%255);
+            Color color = new Color(120/*(i*100)%255*/,(i*100)%255,(i*100)%255);
 
+            //create the polygons, cumbersome, but it works
             int x1 = (int)points.get(i).x+400;
             int x2 = (int)points.get(i+1).x+400;
             int x3 = (int)points.get(i+2).x+400;
@@ -74,7 +78,7 @@ public class Cube {
             polygons.add(new Polygon(xpoints,ypoints,zpoints,color,wireframe));
 
         }
-        //sort the polygons with largest z value first so that the closer ones are drawn over the farther
+        //sort the polygons with largest z value first so that the closer ones are drawn over(last) the farther ones
         for(int i = 0; i < polygons.size()-1;i++) {
             for(int j = i+1; j < polygons.size();j++) {
                 if(polygons.get(i).getLargestZ() > polygons.get(j).getLargestZ()) { //if z value is larger it will swap
@@ -84,10 +88,13 @@ public class Cube {
                 }
             }
         }
+        //largest = largest z valued polygon
         largest = polygons.get(polygons.size()-1).getLargestZ();
+        //draw the polygons
         for(Polygon each : polygons) {
             each.draw(g);
         }
+        //clear the polygon array
         polygons.clear();
     }
 }

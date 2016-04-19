@@ -4,17 +4,16 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseEvent;
 
-
-public class Screen extends JPanel implements MouseListener,MouseMotionListener {
+public class Screen extends JPanel implements KeyListener,MouseListener,MouseMotionListener {
     private BufferedImage bufferedImage;
-    private int count;
-    private boolean mouseDown = false;
-    private int mx,my; //the coordinates of the mouse when it is clicked
-    private int px,py; //previous x and y coordinates of the mouse
+
+    private boolean rotateUp,rotateDown,rotateLeft,rotateRight;
 
     double thetaX = 0;
     double thetaY = 0;
@@ -25,52 +24,59 @@ public class Screen extends JPanel implements MouseListener,MouseMotionListener 
     ArrayList<Cube> cubes;
 
     public Screen() {
-        addMouseListener(this);
-        addMouseMotionListener(this);
+        //add the keylistener
+        addKeyListener(this);
+        //set focusable to true to allow focus to shift to keyboard
+        setFocusable(true);
+        //create cube arraylist
         cubes = new ArrayList<Cube>();
-        points = new ArrayList<Point>();
-        polygons = new ArrayList<Polygon>();
-        cubes.add(new Cube(0,0,0,50));
+        /** add the cubes */
+        for(int x = -250;x <= 250;x += 20) {
+            for(int y = -250;y <= 250;y += 20) {
+                cubes.add(new Cube(x,y,0,15));
+            }
+        }
     }
     public Dimension getPreferredSize() {
         return new Dimension(800,600);
     }
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        //set up the bufferedImage ///////////////////////
         if(bufferedImage == null) {
             bufferedImage = (BufferedImage)(createImage(getWidth(),getHeight()));
         }
         Graphics gBuff = bufferedImage.createGraphics();
         gBuff.setColor(Color.white);
         gBuff.fillRect(0,0,800,600);
+        /////////////////////////////////////////////////
         /**
             do the rotating here:
         */
             //rotateX(thetaX); //happens every time repaint is called
             //rotateY(thetaY);
             //rotateZ(thetaZ);
-        //axes
+        //draw the axes
         gBuff.setColor(Color.black);
         gBuff.drawLine(0,300,800,300); //x
         gBuff.drawLine(400,0,400,600); //y
-        for(int i = 0;i < cubes.size()-1;i++) {
-            for(int j = i+1;j < cubes.size();j++) {
-                if(cubes.get(i).largest > cubes.get(j).largest) {
+        for(int i = 0;i < cubes.size()-1;i++) { //sort the cubes by z values to draw them in the correct order. Bubble sort, but who the fuck cares????
+            for(int j = i+1;j < cubes.size();j++) { 
+                if(cubes.get(i).largest > cubes.get(j).largest) { //getLargest returns the largest z value in the cube, the larger the z the farther back it will appear
                     Cube temp = cubes.get(i);
                     cubes.set(i,cubes.get(j));
                     cubes.set(j,temp);
                 }
             }
         }
-        for(Cube each : cubes) {
+        for(Cube each : cubes) { //draw them cubes
             each.draw(gBuff);
         }
         g.drawImage(bufferedImage,0,0,null);
     }
-    
     //rotation code from tutorial
     public void rotateX(double theta) { //along the x-axis
-        double cos = Math.cos(theta);
+        double cos = Math.cos(theta); //calculate once, not everytime in the loop
         double sin = Math.sin(theta);
         for(Cube each : cubes) {
             for(Point p : each.points) {
@@ -82,7 +88,7 @@ public class Screen extends JPanel implements MouseListener,MouseMotionListener 
         }
     }
     public void rotateY(double theta) { //along the y-axis
-        double cos = Math.cos(theta);
+        double cos = Math.cos(theta); //calculate once, not everytime in the loop 
         double sin = Math.sin(theta);
         for(Cube each : cubes) {
             for(Point p: each.points) {
@@ -94,7 +100,7 @@ public class Screen extends JPanel implements MouseListener,MouseMotionListener 
         }
     }
     public void rotateZ(double theta) { //along the z-axis
-        double cos = Math.cos(theta);
+        double cos = Math.cos(theta); //calculate once, not every time in the loop 
         double sin = Math.sin(theta);
         for(Cube each : cubes) {
             for(Point p : each.points) {
@@ -105,25 +111,72 @@ public class Screen extends JPanel implements MouseListener,MouseMotionListener 
             }
         }
     }
-    public void mousePressed(MouseEvent e) {
-        mx = e.getX();
-        my = e.getY();
-	}
-    public void mouseDragged(MouseEvent e) {
-        count++;
-        if(e.getX() - px < 0) {
-            thetaY -= 0.001;
+    public void move() {
+        while(true) { //infinite loop
+            sleep(10); //sleep with the sleep function
+            if(rotateUp) {
+                rotateX(Math.PI/200);
+            }
+            else if(rotateDown) {
+                rotateX(-Math.PI/200);
+            }
+            if(rotateLeft) {
+                rotateY(Math.PI/200);
+            }
+            else if(rotateRight) {
+                rotateY(-Math.PI/200);
+            }
+            repaint();
         }
-        else if(e.getX() - px > 0) {
-            thetaY += 0.001;
-        }
-        rotateX(thetaX); 
-        rotateY(thetaY);
-        rotateZ(thetaZ);
-        repaint();
-        px = e.getX();
-        py = e.getY();
     }
+    
+    //key listener
+    public void keyPressed(KeyEvent e) {
+        int key = e.getKeyCode();
+        if(key == 38) {
+            rotateUp = true;
+        }
+        else if(key == 40) {
+            rotateDown = true;
+        }
+        else if(key == 37) {
+            rotateLeft = true;
+        }
+        else if(key == 39) {
+            rotateRight = true;
+        }   
+    }
+    public void keyReleased(KeyEvent e) {
+        int key = e.getKeyCode();
+        if(key == 38) {
+            rotateUp = false;
+        }
+        else if(key == 40) {
+            rotateDown = false;
+            
+        }
+        else if(key == 37) {
+            rotateLeft = false;
+        }
+        else if(key == 39) {
+            rotateRight = false;
+        }
+    }
+    //mousepressed for initial location of click
+    public void mousePressed(MouseEvent e) {
+        
+    }
+    //mousedragged for updating the location of the block being dragged across the fucking screen
+    public void mouseDragged(MouseEvent e) {
+        
+    }
+    //useless methods that need to be in because of listener interfaces
+    public void mouseReleased(MouseEvent e){}
+    public void mouseMoved(MouseEvent e){}
+    public void mouseClicked(MouseEvent e){}
+    public void mouseEntered(MouseEvent e){}
+    public void mouseExited(MouseEvent e){}
+    public void keyTyped(KeyEvent e) {}
     public void sleep(int time)
 	{
 		try 
@@ -135,10 +188,4 @@ public class Screen extends JPanel implements MouseListener,MouseMotionListener 
 			Thread.currentThread().interrupt();
 		}
 	}
-    public void mouseMoved(MouseEvent e) {
-    }
-	public void mouseReleased(MouseEvent e){}
-	public void mouseEntered(MouseEvent e){}
-	public void mouseExited(MouseEvent e){}
-	public void mouseClicked(MouseEvent e){}
 }
