@@ -13,6 +13,8 @@ import java.awt.event.MouseEvent;
 public class Screen extends JPanel implements KeyListener,MouseListener,MouseMotionListener {
     private BufferedImage bufferedImage;
 
+    Cube moving;
+
     private boolean rotateUp,rotateDown,rotateLeft,rotateRight;
 
     double thetaX = 0;
@@ -20,7 +22,7 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     double thetaZ = 0;
 
     ArrayList<Point> points;
-    //ArrayList<Polygon> polygons;
+    ArrayList<Polygon> polygons;
     ArrayList<Cube> cubes;
 
     public Screen() {
@@ -28,7 +30,7 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
         addKeyListener(this);
         //set focusable to true to allow focus to shift to keyboard
         setFocusable(true);
-        //add the mouse and mousmotion listeners
+        //add the mouse and mousemotionlist
         addMouseListener(this);
         addMouseMotionListener(this);
         //create cube arraylist
@@ -167,26 +169,29 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     }
     //mousepressed for initial location of click
     public void mousePressed(MouseEvent e) {
-        int x = e.getX(); //event x and y positions
+        int x = e.getX();
         int y = e.getY();
-        //check the collisions
-        //loop through the cubes and their polygons and check between the x and y boundaries of the polygons, each fucking time
-        for(Cube cube : cubes) { //lmao cube three times in a row
-            for(Face each : cube.polygons) { //lmao more bad code
-                System.out.println("whate");
-                if(each.contains(x,y)) {
-                    System.out.println("wtf it worked");
-
-                }
+        for(int i = 0;i < cubes.size();i++) {
+            if(x > cubes.get(i).x+400 && x < cubes.get(i).x+400+cubes.get(i).size && y > cubes.get(i).y+300 && y < cubes.get(i).y+300 + cubes.get(i).size) {
+                moving = cubes.get(i);
+                cubes.remove(i);
+                i--;
+                break;
             }
         }
     }
     //mousedragged for updating the location of the block being dragged across the fucking screen
     public void mouseDragged(MouseEvent e) {
+       if(moving != null) {
+
         
+           repaint();
+       }
     }
     //useless methods that need to be in because of listener interfaces
-    public void mouseReleased(MouseEvent e){}
+    public void mouseReleased(MouseEvent e) {
+        moving = null;     
+    }
     public void mouseMoved(MouseEvent e){}
     public void mouseClicked(MouseEvent e){}
     public void mouseEntered(MouseEvent e){}

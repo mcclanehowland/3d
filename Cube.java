@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Cube {
     int x,y,z,size,largest;
     ArrayList<Point> points;
-    ArrayList<Face> polygons;
+    ArrayList<Polygon> polygons;
     boolean wireframe = false;
     
     public Cube(int x,int y, int z, int size) {
@@ -14,7 +14,7 @@ public class Cube {
         this.z = z; 
         this.size = size; 
         points = new ArrayList<Point>();
-        polygons = new ArrayList<Face>();
+        polygons = new ArrayList<Polygon>();
 
         /** adding all the points. They are grouped into the 6 faces of the cube */
 
@@ -60,32 +60,29 @@ public class Cube {
             int x2 = (int)points.get(i+1).x+400;
             int x3 = (int)points.get(i+2).x+400;
             int x4 = (int)points.get(i+3).x+400;
-            int x5 = x1;
-            int[] xpoints = {x1,x2,x3,x4,x5};
+            int[] xpoints = {x1,x2,x3,x4};
 
             int y1 = (int)points.get(i).y+300;
             int y2 = (int)points.get(i+1).y+300;
             int y3 = (int)points.get(i+2).y+300;
             int y4 = (int)points.get(i+3).y+300;
-            int y5 = y1;
-            int[] ypoints = {y1,y2,y3,y4,y5};
+            int[] ypoints = {y1,y2,y3,y4};
 
             
             int z1 = (int)points.get(i).z;
             int z2 = (int)points.get(i+1).z;
             int z3 = (int)points.get(i+2).z;
             int z4 = (int)points.get(i+3).z;
-            int z5 = z1;
-            int[] zpoints = {z1,z2,z3,z4,z5};
+            int[] zpoints = {z1,z2,z3,z4};
             
-            polygons.add(new Face(xpoints,ypoints,zpoints,color,wireframe));
+            polygons.add(new Polygon(xpoints,ypoints,zpoints,color,wireframe));
 
         }
         //sort the polygons with largest z value first so that the closer ones are drawn over(last) the farther ones
         for(int i = 0; i < polygons.size()-1;i++) {
             for(int j = i+1; j < polygons.size();j++) {
                 if(polygons.get(i).getLargestZ() > polygons.get(j).getLargestZ()) { //if z value is larger it will swap
-                    Face temp = polygons.get(i);
+                    Polygon temp = polygons.get(i);
                     polygons.set(i,polygons.get(j));
                     polygons.set(j,temp);
                 }
@@ -94,7 +91,7 @@ public class Cube {
         //largest = largest z valued polygon
         largest = polygons.get(polygons.size()-1).getLargestZ();
         //draw the polygons
-        for(Face each : polygons) {
+        for(Polygon each : polygons) {
             each.draw(g);
         }
         //clear the polygon array
