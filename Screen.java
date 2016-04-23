@@ -19,10 +19,13 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
         the animation loop.
     */
     private boolean rotateUp,rotateDown,rotateLeft,rotateRight;
+    //for the drag and drop
     private int mouseX,mouseY;
+    //will be a reference to the cube that can be dragged
     private Cube selected;
 
     ArrayList<Cube> cubes;
+    //minecraft?
     ArrayList<Cube> inventory;
 
     public Screen() {
@@ -38,12 +41,20 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
         inventory = new ArrayList<Cube>();
 
         /** add the cubes */
-
-        for(int x = -260;x <= 260;x += 80) {
-            for(int y = -260;y <= 260;y += 80) {
-                cubes.add(new Cube(x,y,-20,40));
-            }
+        while(cubes.size() < 50) { //size of 50 random cubes
+            int z = (int)(Math.random()*800);
+            int x = (int)(Math.random()*800);
+            int y = (int)(Math.random()*600);
+            //add negative numbers into the mix
+            if(Math.random() > 0.5) 
+                x *= -1;
+            if(Math.random() > 0.5)
+                y *= -1;
+            if(Math.random() > 0.5)
+                z *= -1;
+            cubes.add(new Cube(x,y,z,(int)(Math.random()*90+10)));
         }
+
     }
     public Dimension getPreferredSize() {
         return new Dimension(800,600);
@@ -62,21 +73,29 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
         gBuff.setColor(Color.black);
         gBuff.drawLine(0,300,800,300); //x
         gBuff.drawLine(400,0,400,600); //y
-        for(int i = 0;i < cubes.size()-1;i++) { //sort the cubes by z values to draw them in the correct order. Bubble sort, but who the fuck cares????
+        /*
+            sort the cubes by their largest z value. 
+            the largest z values will be first in the
+            list, so they are drawn over by "closer" 
+            cubes.
+        */
+        for(int i = 0;i < cubes.size()-1;i++) {             
             for(int j = i+1;j < cubes.size();j++) { 
-                if(cubes.get(i).largest > cubes.get(j).largest) { //getLargest returns the largest z value in the cube, the larger the z the farther back it will appear
-                    Cube temp = cubes.get(i);
+                //getLargest returns the largest z value in the cube
+                if(cubes.get(i).largest > cubes.get(j).largest) {                     
+                    //swap them
+                    Cube temp = cubes.get(i); 
                     cubes.set(i,cubes.get(j));
                     cubes.set(j,temp);
                 }
             }
         }
-        for(Cube each : cubes) { //draw them cubes
+        for(Cube each : cubes) { //draw the cubes
             each.draw(gBuff);
         }
         g.drawImage(bufferedImage,0,0,null);
     }
-    //rotation code from tutorial
+    //rotation code from internet 
     public void rotateX(double theta) { //along the x-axis
         double cos = Math.cos(theta); //calculate once, not everytime in the loop
         double sin = Math.sin(theta);
@@ -170,7 +189,6 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
         }
         else if(key == 40) {
             rotateDown = false;
-            
         }
         else if(key == 37) {
             rotateLeft = false;
@@ -192,8 +210,8 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
         */
         for(Cube cube : cubes) {
             for(Polygon p : cube.polygons) {
-                if(p.contains(x,y)) {
-                    index = counter;
+                if(p.contains(x,y)) { 
+                    index = counter; 
                     selected = cube;
                     break;
                 }
@@ -201,10 +219,12 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
             counter++;
         }
         //add the cube to inventory and remove it from the cubes list
+        /*
         if(index != -1) {
-            //inventory.add(cubes.get(index));
-            //cubes.remove(index);
+            inventory.add(cubes.get(index));
+            cubes.remove(index);
         }
+        */
     }
     //mousedragged for updating the location of the block being dragged across the fucking screen
     public void mouseDragged(MouseEvent e) {
@@ -212,29 +232,32 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
             each.x += e.getX()-mouseX;
             each.y += e.getY()-mouseY;
         }
+        //update the mouseX and mouseY positions, so they can be used in the next iteration of the function
         mouseX = e.getX();
         mouseY = e.getY();
     }
-    //useless methods that need to be in because of listener interfaces
+    //when the mouse is released, drop the cube
     public void mouseReleased(MouseEvent e) {
+        
         selected = null;    
     }
+    //update the mouse position so it starts in the correct place
     public void mouseMoved(MouseEvent e){
         mouseX = e.getX();
         mouseY = e.getY();
     }
-    public void mouseClicked(MouseEvent e){}
+
+    //useless methods that need to be in because of listener interfaces
+    public void mouseClicked(MouseEvent e){} //never used before in my life
     public void mouseEntered(MouseEvent e){}
     public void mouseExited(MouseEvent e){}
     public void keyTyped(KeyEvent e) {}
     public void sleep(int time)
 	{
-		try 
-		{
+		try {
 			Thread.sleep(time);
 		} 
-		catch(InterruptedException ex) 
-		{
+		catch(InterruptedException ex) {
 			Thread.currentThread().interrupt();
 		}
 	}

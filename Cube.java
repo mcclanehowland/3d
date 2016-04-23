@@ -8,18 +8,6 @@ public class Cube {
     public ArrayList<Polygon> polygons;
     boolean wireframe = false;
     
-    //copy constructor, for adding items to the inventory
-    public Cube(Cube otherCube) {
-        this.points = otherCube.points;
-        this.polygons = otherCube.polygons;
-        this.size = otherCube.size;
-        this.x = otherCube.x;
-        this.y = otherCube.y;
-        this.z = otherCube.z;
-        this.largest = otherCube.largest;
-
-    }
-    //normal constructor
     public Cube(int x,int y, int z, int size) {
         this.x = x; 
         this.y = y; 
@@ -59,11 +47,9 @@ public class Cube {
         points.add(new Point(x+size,y,z));
         points.add(new Point(x+size,y,z+size));
         points.add(new Point(x,y,z+size));
-
-        
     }
     public void draw(Graphics g) {
-
+        //clear the polygon array
         polygons.clear();
         for(int i = 0; i < points.size();i += 4) {
 
@@ -90,6 +76,7 @@ public class Cube {
             int z4 = (int)points.get(i+3).z;
             int[] zpoints = {z1,z2,z3,z4};
             
+            //add a polygon to the list
             polygons.add(new Polygon(xpoints,ypoints,zpoints,color,wireframe));
 
         }
@@ -97,6 +84,7 @@ public class Cube {
         for(int i = 0; i < polygons.size()-1;i++) {
             for(int j = i+1; j < polygons.size();j++) {
                 if(polygons.get(i).getLargestZ() > polygons.get(j).getLargestZ()) { //if z value is larger it will swap
+                    //swap
                     Polygon temp = polygons.get(i);
                     polygons.set(i,polygons.get(j));
                     polygons.set(j,temp);
@@ -109,6 +97,5 @@ public class Cube {
         for(Polygon each : polygons) {
             each.draw(g);
         }
-        //clear the polygon array
     }
 }
