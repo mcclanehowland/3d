@@ -13,27 +13,31 @@ import java.awt.event.MouseEvent;
 public class Screen extends JPanel implements KeyListener,MouseListener,MouseMotionListener {
     private BufferedImage bufferedImage;
 
+
     private boolean rotateUp,rotateDown,rotateLeft,rotateRight;
 
     double thetaX = 0;
     double thetaY = 0;
     double thetaZ = 0;
 
-    ArrayList<Point> points;
-    ArrayList<Polygon> polygons;
     ArrayList<Cube> cubes;
+    ArrayList<Cube> inventory;
 
     public Screen() {
         //add the keylistener
         addKeyListener(this);
         //set focusable to true to allow focus to shift to keyboard
         setFocusable(true);
+        //add the mouse and mousemotionlist
+        addMouseListener(this);
+        addMouseMotionListener(this);
         //create cube arraylist
         cubes = new ArrayList<Cube>();
         /** add the cubes */
-        for(int x = -250;x <= 250;x += 20) {
-            for(int y = -250;y <= 250;y += 20) {
-                cubes.add(new Cube(x,y,0,15));
+
+        for(int x = -260;x <= 260;x += 80) {
+            for(int y = -260;y <= 260;y += 80) {
+                cubes.add(new Cube(x,y,-20,40));
             }
         }
     }
@@ -164,14 +168,21 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     }
     //mousepressed for initial location of click
     public void mousePressed(MouseEvent e) {
-        
+        int x = e.getX();
+        int y = e.getY();
+        for(Cube cube : cubes) {
+            for(Polygon p : cube.polygons) {
+                if(p.contains(x,y)) {
+                    System.out.println("true");
+                    break;
+                }
+            }
+        }
     }
     //mousedragged for updating the location of the block being dragged across the fucking screen
-    public void mouseDragged(MouseEvent e) {
-        
-    }
+    public void mouseDragged(MouseEvent e) {}
     //useless methods that need to be in because of listener interfaces
-    public void mouseReleased(MouseEvent e){}
+    public void mouseReleased(MouseEvent e) {}
     public void mouseMoved(MouseEvent e){}
     public void mouseClicked(MouseEvent e){}
     public void mouseEntered(MouseEvent e){}

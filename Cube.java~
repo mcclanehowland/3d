@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Cube {
     int x,y,z,size,largest;
     ArrayList<Point> points;
-    public ArrayList<Polygon> polygons;
+    ArrayList<Polygon> polygons;
     boolean wireframe = false;
     
     public Cube(int x,int y, int z, int size) {
@@ -51,15 +51,12 @@ public class Cube {
         
     }
     public void draw(Graphics g) {
-
-        polygons.clear();
         for(int i = 0; i < points.size();i += 4) {
 
             Color color = new Color(120/*(i*100)%255*/,(i*100)%255,(i*100)%255);
 
-            //create the polygons and translate to the new origin, (400,300)
-
-            int x1 = (int)points.get(i).x+400; 
+            //create the polygons, cumbersome, but it works
+            int x1 = (int)points.get(i).x+400;
             int x2 = (int)points.get(i+1).x+400;
             int x3 = (int)points.get(i+2).x+400;
             int x4 = (int)points.get(i+3).x+400;
@@ -98,5 +95,6 @@ public class Cube {
             each.draw(g);
         }
         //clear the polygon array
+        polygons.clear();
     }
 }
