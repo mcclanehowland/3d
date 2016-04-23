@@ -8,6 +8,18 @@ public class Cube {
     public ArrayList<Polygon> polygons;
     boolean wireframe = false;
     
+    //copy constructor, for adding items to the inventory
+    public Cube(Cube otherCube) {
+        this.points = otherCube.points;
+        this.polygons = otherCube.polygons;
+        this.size = otherCube.size;
+        this.x = otherCube.x;
+        this.y = otherCube.y;
+        this.z = otherCube.z;
+        this.largest = otherCube.largest;
+
+    }
+    //normal constructor
     public Cube(int x,int y, int z, int size) {
         this.x = x; 
         this.y = y; 

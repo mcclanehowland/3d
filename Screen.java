@@ -14,11 +14,13 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     private BufferedImage bufferedImage;
 
 
+    /* 
+        booleans for handling the rotation. Booleans are used to achieve smooth rotation inside
+        the animation loop.
+    */
     private boolean rotateUp,rotateDown,rotateLeft,rotateRight;
-
-    double thetaX = 0;
-    double thetaY = 0;
-    double thetaZ = 0;
+    private int mouseX,mouseY;
+    private Cube selected;
 
     ArrayList<Cube> cubes;
     ArrayList<Cube> inventory;
@@ -31,8 +33,10 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
         //add the mouse and mousemotionlist
         addMouseListener(this);
         addMouseMotionListener(this);
-        //create cube arraylist
+        //instantiate arraylists
         cubes = new ArrayList<Cube>();
+        inventory = new ArrayList<Cube>();
+
         /** add the cubes */
 
         for(int x = -260;x <= 260;x += 80) {
@@ -54,12 +58,6 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
         gBuff.setColor(Color.white);
         gBuff.fillRect(0,0,800,600);
         /////////////////////////////////////////////////
-        /**
-            do the rotating here:
-        */
-            //rotateX(thetaX); //happens every time repaint is called
-            //rotateY(thetaY);
-            //rotateZ(thetaZ);
         //draw the axes
         gBuff.setColor(Color.black);
         gBuff.drawLine(0,300,800,300); //x
@@ -82,6 +80,10 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     public void rotateX(double theta) { //along the x-axis
         double cos = Math.cos(theta); //calculate once, not everytime in the loop
         double sin = Math.sin(theta);
+        /*
+            loop through the cubes and their points, 
+            and change the x and y of each point
+        */
         for(Cube each : cubes) {
             for(Point p : each.points) {
                 double y = p.y;
@@ -94,6 +96,10 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     public void rotateY(double theta) { //along the y-axis
         double cos = Math.cos(theta); //calculate once, not everytime in the loop 
         double sin = Math.sin(theta);
+        /*
+            loop through the cubes and their points, 
+            and change the x and y of each point
+        */
         for(Cube each : cubes) {
             for(Point p: each.points) {
                 double x = p.x;
@@ -106,6 +112,10 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     public void rotateZ(double theta) { //along the z-axis
         double cos = Math.cos(theta); //calculate once, not every time in the loop 
         double sin = Math.sin(theta);
+        /*
+            loop through the cubes and their points, 
+            and change the x and y of each point
+        */
         for(Cube each : cubes) {
             for(Point p : each.points) {
                 double x = p.x;
@@ -118,6 +128,7 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     public void move() {
         while(true) { //infinite loop
             sleep(10); //sleep with the sleep function
+            //rotate up/down and left/right depending on the booleans set by the key pressed and key released
             if(rotateUp) {
                 rotateX(Math.PI/200);
             }
@@ -137,6 +148,7 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     //key listener
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
+        //logic for handling key presses
         if(key == 38) {
             rotateUp = true;
         }
@@ -152,6 +164,7 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     }
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
+        //logic for handling key releases
         if(key == 38) {
             rotateUp = false;
         }
@@ -168,22 +181,48 @@ public class Screen extends JPanel implements KeyListener,MouseListener,MouseMot
     }
     //mousepressed for initial location of click
     public void mousePressed(MouseEvent e) {
+        int index = -1; //index of the cube the click may be inside
+        int counter = 0; //counter to find the index
         int x = e.getX();
         int y = e.getY();
+        /*
+            loop through the cubes and their polygons. Later 
+            I will loop through the polygons backwards because the 
+            closest are drawn last.
+        */
         for(Cube cube : cubes) {
             for(Polygon p : cube.polygons) {
                 if(p.contains(x,y)) {
-                    System.out.println("true");
+                    index = counter;
+                    selected = cube;
                     break;
                 }
             }
+            counter++;
+        }
+        //add the cube to inventory and remove it from the cubes list
+        if(index != -1) {
+            //inventory.add(cubes.get(index));
+            //cubes.remove(index);
         }
     }
     //mousedragged for updating the location of the block being dragged across the fucking screen
-    public void mouseDragged(MouseEvent e) {}
+    public void mouseDragged(MouseEvent e) {
+        for(Point each : selected.points) {
+            each.x += e.getX()-mouseX;
+            each.y += e.getY()-mouseY;
+        }
+        mouseX = e.getX();
+        mouseY = e.getY();
+    }
     //useless methods that need to be in because of listener interfaces
-    public void mouseReleased(MouseEvent e) {}
-    public void mouseMoved(MouseEvent e){}
+    public void mouseReleased(MouseEvent e) {
+        selected = null;    
+    }
+    public void mouseMoved(MouseEvent e){
+        mouseX = e.getX();
+        mouseY = e.getY();
+    }
     public void mouseClicked(MouseEvent e){}
     public void mouseEntered(MouseEvent e){}
     public void mouseExited(MouseEvent e){}
